@@ -37,20 +37,16 @@ Risks mainly center on adoption. If Web3 does not provide a compelling enough re
 
 # Deliverables
 
-- Design the GeoDID Method Specification, based on the SpatioTemporal Asset Catalog spec and build alpha @astral-protocol modules to create and manage GeoDIDs, and associated spatial data assets, stored on IPFS / Filecoin. Fuse the GeoDID specification with the ERC-1155 standard to enable interchangeable proofs of human location through the means of NFTs: the GeoNFT.
-- Develop and market Geolocker, the first spatial dApp making usage of the Astral Protocol. Geolocker will be a mobile dApp for secure minting of sybil proof GeoNFTs, binding the GeoDID specification. Users collect GeoNFTs when they check-in on places, events or complete certain tasks, enabling decentralized location-based value generation.
+- Design the GeoDID Method Specification, based on the SpatioTemporal Asset Catalog spec and build @astral-protocol modules to manage CRUD operations of GeoDIDs on IPFS / Filecoin.
 
 # Development Roadmap
 
 An ecosystem of location-based dApps will benefit from a standard way of representing spatial data in the Web3 universe. By converging on a versatile, extensible standard, different actors in the ecosystem can develop their systems to be interoperable with that specification.
 For this, we are designing the Astral Protocol: a standardized way of working with spatial data in Web3. Within the Astral Protocol we are creating a geographic decentralized identifier, the GeoDID, which is the primitive for representing spatial data assets in Web3. Based on this specification, we will create a verifiable spatial data registry and develop the tools - software modules, interfaces, etc - required for users to perform different tasks necessary to register, share, revise and consume these spatial data structures.
 The GeoDID identifier will be fused together with the Ethereum ERC-1155 standard into a new web primitive called the GeoNFT. These NFTs will be created in an efficient manner in a so called Spatial Assets Registry smart contract, which will be compliant with current Web3 NFT interfaces and effectively allow for interchangeability and composability of location-data in Web3 applications to unlock yet undiscovered use-cases.
+We are also creating the Filecoin GeoDID browser that allows users to interact with the protocol in a UX enhanced interface.
 
-We are also creating the first spatial mobile dapp, Geolocker, which will make use of the Astral Protocol. Humans know that where they are matters, but smart contracts do not know where they are. Current location-based schemes are centralized, unfair and invasive and there are no real economic incentives to share location. To tackle this, Geolocker will incentivize users to check-in to their location and collect GeoNFTs. We see potential convergence with dapps that could make use of location data, like events and ticketing, gaming and governance dapps, and we know that usage of Geolocker will drive adoption to the Filecoin network as each GeoNFT will be directly linked to a newly pinned GeoDID.
-
-We hold self-sovereignty as a core value at Astral, and are designing all of our products and systems to give users the option of complete autonomy, including the right to choose privacy, if appropriate.
-
-## 1. Create the GeoDID Method Specification and prototype @astral-protocol modules
+## Create the GeoDID Method Specification and prototype @astral-protocol modules
 
 The GeoDID Method Specification will “specify the precise operations by which [Geo]DIDs are created, resolved and deactivated and [Geo]DID documents are written and updated”. This will define the specifics of the verifiable spatial data registries we are designing.
 
@@ -78,59 +74,37 @@ In the above example, we created an IPLD block for each GeoDID. We then use the 
 The benefit of this is that we have a data structure containing the GeoDIDs that represents the replicated parent child relationship of the STAC Specification. This makes it easier for users to query a particular data set, and get access to the collection they need. Using IPLD Selectors, the user can go even further and only require the specific GeoDID Items or GeoDID Catalogs that they need, granted the DID Controller grants them access to it. We plan to further this functionality and build several IPLD codecs that will cater to the spatial data community. Codecs that can encode COGs (Cloud Optimized GeoTIFFs) and other native geo-spatial files. We also want to build a codec that can encode our GeoDID Documents to add further functionality, maybe things like PostGIS functionality, etc.
 These codecs are where most of our value proposition will reside in regards to the Protocol Labs ecosystem. That value proposition is bringing geo-spatial tools and enhanced workflows to the protocol labs ecosystem, as well as building a libp2p network that suits the specialized needs of the geo-spatial community in the web3 space. This is the frontier where the geo-spatial community and web3 community collide.
 
-The remainder of phase 1's roadmap entails the creation of the following Astral Protocol packages:
+The remainder of roadmap entails the creation of the initial Astral-Protocol packages and the front-end demo to interact with it:
 
 **@astral-protocol-core**
-The @astral-protocol-core package is the core package of the implementation. This is where we will develop the Astral Node Instance. Within the instance it will contain a transformer, that will enable us to use existing tools for working with the STAC Spec, as well as the transformation from STACs to GeoDIDs. In addition, the core package will contain a document handler that will listen for events from our smart contracts. These events will trigger actions for authenticating the DID Documents, making requests to read or update DID Documents, the anchoring of the DID Documents, and their state changes to the Verifiable Data Registry. The core package will also contain the Pinning API for both IPFS and Powergate, and the geo-did-resolver package.
+The @astral-protocol-core package is the core part of the implementation. This is where we will develop the Astral instance. It will contain a transformer, that will enable us to use existing tools for working with the STAC Spec, as well as the transformation from STACs to GeoDIDs. In addition, the core package will contain a document handler that will listen for events from our smart contracts. These events will trigger actions for authenticating the DID Documents, making requests to read or update DID Documents, the anchoring of the DID Documents, and their state changes to the Verifiable Data Registry.
 
-**@astral-protocol-api**
-
-The @astral-protocol-api package will supply endpoints for the @astral-protocol-core. This will enable ease of access and integration in our mobile dapp.
-
-**@geo-did-resolver**
-The @geo-did-resolver package will contain our DID method specification and will be responsible for the creation and dereferencing of the GeoDID Documents. This library is intended to use Ethereum addresses and NFT metadata as fully self managed Decentralized Identifiers and wrap them in a DID Document. It supports the proposed Decentralized Identifiers spec from the W3C Credentials Community Group. It requires the did-resolver library, which is the primary interface for resolving DIDs. In addition, the DID method relies on the minting of a ERC-1155 standard token, which will act as the registry. The relation will be a 1:1 relation from GeoDID to NFT.
+The core package will also contain the Pinning API for both IPFS and Powergate, and a resolver method, which will contain our DID method specification and will be responsible for the creation and dereferencing of the GeoDID Documents. This library intends to use Ethereum addresses and NFT metadata as fully self managed Decentralized Identifiers and wrap them in a DID Document. It supports the proposed Decentralized Identifiers spec from the W3C Credentials Community Group. It requires the did-resolver library, which is the primary interface for resolving DIDs. In addition, the DID method relies on the minting of a ERC-1155 standard token, which will act as the registry. The relation will be a 1:1 relation from GeoDID to NFT.
 
 **@astral-protocol-contracts**
 The @astral-protocol-contracts package will act as the Verifiable Data Registry for the GeoDID Documents as well as the Ethereum contract code that allows a user to mint a GeoNFT. This contract code follows the [ERC-1155 standard](https://eips.ethereum.org/EIPS/eip-1155) which allows the the inclusion of any combination of fungible and non fungible tokens, all in a single deployed contract.
 This standard supports setting a URI value for all the tokens created and allows for id substitution in client apps. Our URI will have the format of did:geo{id} (subject to change) and each client app can input the corresponding GeoDID id to have the full GeoDID representation. We intend to adopt the ERC-1155 Metadata URI Json schema as part of our GeoDID specification and create a combination of the two, allowing interoperability between both ERC-1155, the STAC and the DID specifications.
 Client dapps of the Astral Protocol will interact with the Spatial Assets Registrar contract to mint the GeoNFTs for users. These GeoNFTs may be composed in other dApps to represent proofs of human location, effectively bridging the Blockchain - real world chasm.
 
-## 2. Develop and market Geolocker
-
-Geolocker is location based incentivization, controlled by you. People know that their location data matters, but often they realize they do not control it, as it falls in the hands of centralized actors who accrue all its value. Besides, at the moment Smart Contracts do not know where you are, which added to the lack of economic incentives to share human location, creates a real world to blockchain disconnect. Geolocker wants to change that by giving the first step in the direction of enabling decentralized location-based value generation.
-
-The way Geolocker works is simple: a user moves around in the real world, presses the check in button whenever near a particular place and a GeoNFT is minted, proving their location. Under the hood, the user's geospatial data and timestamp are recorded, as well as their interest-point bounds in the map. This metadata is incorporated in our GeoDID specification and pinned over Filecoin.
-
-The user will have full sovereignty over the privacy of their location data by having the ability to obfuscate details about their data. This will come as an improvement right after an alpha release of the geolocker dapp. The intention is to use a privacy-preserving module that allows computations over encrypted data, namely to prove presence at a location without revealing who was there. Research in this module will include secure enclave protocols that are interoperable with Ethereum smart contracts or proxy re-encryption schemes such as the one implemented by NuCypher.
-
-A primary concern with the usage of GPS data to build such kind of dApp is the potential of spoofing one's location and thereby cheating the system. For this purpose, we are exploring the possibility of usage of decentralized and fault tolerant solutions such as the one provided by [FOAM](foam.io). This solution provides consensus on whether someone is verifiably at a certain point in time and space, accounting for the GPS vulnerabilities.
-
-The development of Geolocker also entails the creation of $ASTRAL, an utility currency that will underpin the Astral ecosystem and Astral Protocol usage. In its first use case in Geolocker, users will be incentivized to collect GeoNFTs as they move in the world, receiving tokens for being top collectors in a given zone/timeframe. Later, when astralDAO is created, users will also be rewarded with $ASTRAL as they contribute to governance decisions. For the purpose of Geolocker, users will also be able to mint special booster NFTs with \$ASTRAL that provide extra bonuses for the collection of GeoNFTs and thus location data sharing.
-
-The mobile dApp will be prototyped using a known cross-platform mobile framework - Flutter. This means more cost-effective development as the app will be built for both Android and IOS at the same time. The intention is to build a frictionless UX, integrated with known mobile Ethereum wallets such that our solution is always non-custodial. Your keys, your data. We understand that the community for mobile dApps is still small but we see this as an opportunity to incentivize the masses for real world decentralized app usage, right in their smartphones
-
-As for the marketing of the dApp there are many use-cases that we can partner with to achieve sufficient user traction. We envision partnering with event organizers that wish to promote a verifiable and automated ticketing system to access an area. In this case, the verification of one's location through the GeoNFT and the ownership of a ticket NFT could automatically grant access to a stage, without human or mechanical interaction. Payments inside the event area could be done through an extension of our dApp.
-Another interesting use case from an advertising perspective, could be physical stores that want to incentivize people to come and spend inside. In a nutshell, if a user visits a store and mints a GeoNFT inside it, an additional reward is given. From the store's perspective it is essentially an immutable and verifiable way to prove that a customer visited their store and was exposed to a product that they wanted to show.
-
-We theorize that sufficient gamification and user traction in the dApp will provide a pathway of real world usage of Filecoin in the back scenes due to the constant pinning of GeoDIDs over Filecoin and the need for their persistent availability for other dApps that might consume this primitive.
+**Filecoin GeoDID browser**
+This is a UX enhanced interface that allows spatial data providers to register spatial assets that follow the STAC spec and transform them into a GeoDID format, managing all their metadata specificied GeoDID.
 
 # Development Roadmap Budget
 
 In sum, the roadmap will consider:
 
 - Designing the GeoDID specification based on STAC Catalogs / Items, so we have a standard way of representing location data in Web3 for self-sovereign users, and building the initial version of Astral Protocol, which will manage the GeoDID primitive over the decentralized web.
-- Developing and marketing of Geolocker, the first mobile spatial dApp to incentivize proofs of human location.
 
-Time is spanning over a 6 month period after the grant start (placeholder date as the 1st of november of 2020):
+Time is spanning over a 3 month period after the grant start (placeholder date as the 1st of november of 2020):
 
-| Milestone                                                            | Time                                   | Cost     |
-| -------------------------------------------------------------------- | -------------------------------------- | -------- |
-| GeoDID Method Specification and @astral-protocol modules             | Start: 01/11/2020 / Finish: 31/01/2021 | \$25,000 |
-| Geolocker mobile dApp and \$ASTRAL governance /cryptoeconomic design | Start: 01/02/2021 / Finish: 30/04/2021 | \$25,000 |
+| Milestone                                   | Time                                   | Cost     |
+| ------------------------------------------- | -------------------------------------- | -------- |
+| GeoDID Method Specification                 | Start: 16/11/2020 / Finish: 15/12/2021 | \$12,500 |
+| @astral-protocol modules and front-end demo | Start: 16/12/2020 / Finish: 16/02/2021 | \$12,500 |
 
 ## Total Budget Requested
 
-Total: \$50,000 for a 6 month period for the development of the Astral Protocol and the Geolocker dapp. This sum provides a much needed security at a pivotal time of the project and will support the two current full time developers in it, as well as serve for any gitcoin bounties we intend to launch to support covering the development of specific parts of the project.
+Total: \$25,000 for a 3 month period for the development of the initial Astral Protocol implementation. This sum provides a much needed security at a pivotal time of the project and will support the two current full time developers in it, as well as serve for any gitcoin bounties we intend to launch to support covering the development of specific parts of the project.
 
 Breakdown of budget:
 
@@ -140,7 +114,7 @@ Breakdown of budget:
 
 # Maintenance and Upgrade Plans
 
-The completion of the first iteration of the astral-protocol, the GeoDID method specification and the Geolocker spatial dapp are only the first steps of a bigger vision. We will not only continue to use the GeoDIDs ourselves but also use it in conjunction with real-world partners we will cooperate with, e.g. 4 Earth Intelligence. On top of that, we will continue to expand on the fundamentals described above. This can for example include ideas like:
+The completion of the first iteration of the astral-protocol and the GeoDID method specification are only the first steps of a bigger vision. We will not only continue to use the GeoDIDs ourselves but also use it in conjunction with real-world partners we will cooperate with, e.g. 4 Earth Intelligence. On top of that, we will continue to expand on the fundamentals described above. This can for example include ideas like:
 
 - R&D privacy preserving GeoDIDs, where data owners can restrict access to the data asset, using a proxy re-encryption scheme or a secure-enclave computation system.
 - Leverage on Layer 2 networks on Ethereum to cut down substantially on transaction fee costs so that the dApp can be scaled and massified.
